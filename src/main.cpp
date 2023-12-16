@@ -7,6 +7,7 @@ const float heartRateValues[] = {111,100,80,90,70,100};
 int currentIndex = 0;
 unsigned long previousMillis;
 const long interval = 1000;
+float currentValue = 0;
 
 //custom boards may override default pin definitions with BLEPeripheral(PIN_REQ, PIN_RDY, PIN_RST)
 BLEPeripheral                    blePeripheral                      = BLEPeripheral();
@@ -72,9 +73,12 @@ void setup() {
 }
 
 void loop() {
-
   blePeripheral.poll();
-  heartbitCharacteristic.setValueBE(heartRateValues[currentIndex]);
+  if (heartRateValues[currentIndex] != currentValue) {
+    currentValue = heartRateValues[currentIndex];
+    heartbitCharacteristic.setValueBE(currentValue);
+  }
+
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     // Save the current time
